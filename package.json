@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
     "dev": "tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/index.js\"",
     "dev-a": "debug_parent_privatekey=2163b9e4411ad1df8720833b35dcf57ce44556280d9e020de2dc11752798ff9c tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/index.js\"",
     "dev-dummy": "tsc-watch --project . --outDir ./dist --onSuccess \"nodemon ./dist/presentation/testing.js\"",
@@ -15,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "typescript": "^5.2.2",
     "@fastify/cors": "^8.4.1",
     "@ipld/dag-json": "^10.1.5",
     "@sphereon/pex": "2.2.2",
@@ -40,7 +43,8 @@
     "pg": "^8.11.3",
     "sqlite3": "^5.1.6",
     "typeorm": "^0.3.17",
-    "web-did-resolver": "^2.0.27"
+    "web-did-resolver": "^2.0.27",
+    "@trust/keyto":"1.0.1"
   },
   "type": "module",
   "devDependencies": {

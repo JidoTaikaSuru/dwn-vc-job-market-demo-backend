@@ -23,6 +23,9 @@ dependencies:
   '@tbd54566975/dwn-sdk-js':
     specifier: ^0.2.8
     version: 0.2.9
+  '@trust/keyto':
+    specifier: 1.0.1
+    version: 1.0.1
   '@veramo/core':
     specifier: ^5.5.3
     version: 5.5.3
@@ -11836,6 +11839,7 @@ packages:
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+    requiresBuild: true
     dev: false
 
   /write-file-atomic@2.4.3:
