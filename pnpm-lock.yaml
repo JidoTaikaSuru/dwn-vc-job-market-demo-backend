@@ -83,6 +83,9 @@ dependencies:
   typeorm:
     specifier: ^0.3.17
     version: 0.3.17(pg@8.11.3)(sqlite3@5.1.6)
+  typescript:
+    specifier: ^5.2.2
+    version: 5.3.3
   web-did-resolver:
     specifier: ^2.0.27
     version: 2.0.27
@@ -100,9 +103,6 @@ devDependencies:
   tsc-watch:
     specifier: ^6.0.4
     version: 6.0.4(typescript@5.3.3)
-  typescript:
-    specifier: ^5.2.2
-    version: 5.3.3
 
 packages:
 
@@ -11464,7 +11464,6 @@ packages:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /ua-parser-js@1.0.37:
     resolution: {integrity: sha512-bhTyI94tZofjo+Dn8SN6Zv8nBDvyXTymAdM3LDI/0IboIUwTu1rEhW7v2TfiVsoYWgkQ4kOVqnI8APUFbIQIFQ==}
