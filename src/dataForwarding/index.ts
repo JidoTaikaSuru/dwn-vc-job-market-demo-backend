@@ -8,10 +8,13 @@ import { CID } from 'multiformats'
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import * as ethers  from  "ethers";
-const keyto = require('@trust/keyto'); //this is the winner
-import * as didJWT from 'did-jwt';
+const keyto = require('@trust/keyto'); //this is the winner ... but its old and crappy so maybe not that much of a winner. 
+import * as didJWT from 'did-jwt'; //NEW WINNER  didJWT.ES256KSigner(didJWT.hexToBytes(debug_parent_privatekey))  
+import {Resolver} from 'did-resolver';  //for did-jwt
 import dotenv from "dotenv";
-
+//@ts-ignore
+import {getResolver} from 'ethr-did-resolver' //TODO remove 
+import { getResolver as pkhDidResolver } from "pkh-did-resolver"; 
 
 
 dotenv.config();
@@ -23,6 +26,11 @@ const identifier = await agent.didManagerGetByAlias({
 });
 
 
+
+
+
+
+if(false){
 let pkhidentifier ;
 
 try {
@@ -80,7 +88,9 @@ if(jwkidentifier && jwkidentifier.keys[0].meta){
     })
     
 
+    //@ts-ignore
     if( jwkdoc.didDocument?.verificationMethod && jwkdoc.didDocument?.verificationMethod[0]){
+    //@ts-ignore
       const resolvedmjwk = {...jwkdoc.didDocument?.verificationMethod[0].publicKeyJwk};
       console.log("🚀 ~ file: index.ts:139 ~ mjwk:", resolvedmjwk)
       /*
@@ -118,6 +128,7 @@ if(jwkidentifier && jwkidentifier.keys[0].meta){
 
 }
 
+}
 
 
 
@@ -127,7 +138,34 @@ export type TakeDataHeaders = {
   //"body-sha256":string;
 };
 
+
+
+if(false){ // this works 
+const signer = didJWT.ES256KSigner(didJWT.hexToBytes('278a5de700e29faae8e40e366ec5012b5ec63d36ec77e8a2417154cc1d25383f')) // this works 
+
+let jwt = await didJWT.createJWT(
+  { aud: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74', iat: undefined, name: 'uPort Developer' },
+  { issuer: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74', signer },
+  { alg: 'ES256K' }
+)
+console.log(jwt)
+
+let didJWTdecoded = didJWT.decodeJWT(jwt)
+console.log("🚀 ~ file: index.ts:39 ~ decoded:", didJWTdecoded)
+
+
+
+
+let resolver = new Resolver({...getResolver({infuraProjectId: '7a8c8616ca2449a7b520889743504cbf'})});
+
+let verificationResponse = await didJWT.verifyJWT(jwt, {
+  resolver,
+  audience: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74'
+})
+ console.log("🚀 ~ file: index.ts:49 ~ verificationResponse:", verificationResponse)
+}
  
+1===1;
 
 
 /*
@@ -177,6 +215,33 @@ const my_jwk_pubkey = await jose.importJWK(mykeyJwk_pub);
 
 const my_endpoint = "localhost:8080"
 
+
+const didJWTsigner = didJWT.ES256KSigner(didJWT.hexToBytes(debug_parent_privatekey)) 
+
+let didJWTjwt = await didJWT.createJWT(
+  { aud: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74', iat: undefined, name: 'uPort Developer' },
+  { issuer: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74', signer:didJWTsigner },
+  { alg: 'ES256K' });
+console.log("🚀 ~ file: index.ts:224 ~ jwt:", didJWTjwt)
+
+let didJWTdecoded = didJWT.decodeJWT(didJWTjwt)
+console.log("🚀 ~ file: index.ts:39 ~ decoded:", didJWTdecoded)
+
+try{
+  const { payload:payload_didjwt, protectedHeader:protectedHeader5_didjwt } = await jose.jwtVerify(didJWTjwt, parent_jwk_pubkey)
+  console.log("🚀 ~ file: index.ts:232 ~ protectedHeader5_didjwt:", protectedHeader5_didjwt)
+  console.log("🚀 ~ file: index.ts:232 ~ payload_didjwt:", payload_didjwt)
+  if( !payload_didjwt.error){
+    console.log(">>> JWT VERIFIED !  <<<")
+    console.log(">>> JWT VERIFIED !  <<<")
+    console.log(">>> JWT VERIFIED !  <<<")
+    console.log("\n")
+  }
+}
+catch(e){
+  console.log("🚀 ~ file: index.ts:  ~ handler: ~ e:", e)
+  console.log("🚀 ~ file: index.ts:237 ~ e:", e)
+}
 
 
 1===1
