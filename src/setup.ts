@@ -31,6 +31,7 @@ import { DIDResolverPlugin } from "@veramo/did-resolver";
 import { Resolver } from "did-resolver";
 import { getResolver as ethrDidResolver } from "ethr-did-resolver";
 import { getResolver as webDidResolver } from "web-did-resolver";
+//import { getResolver as pkhDidResolver } from "pkh-did-resolver"; //this maybe could be retrieved from "@veramo/did-provider-pkh";
 
 // Storage plugin using TypeOrm
 import {
@@ -49,6 +50,11 @@ import { DataSource } from "typeorm";
 
 import dotenv from "dotenv";
 import { IonDIDProvider } from "@veramo/did-provider-ion";
+
+import  {getDidPkhResolver, PkhDIDProvider } from "@veramo/did-provider-pkh";
+import { getDidKeyResolver, KeyDIDProvider } from "@veramo/did-provider-key";
+import {getDidJwkResolver, JwkDIDProvider } from "@veramo/did-provider-jwk";
+
 
 dotenv.config();
 export const DEFAULT_IDENTIFIER_SCHEMA = "default";
@@ -110,13 +116,19 @@ export const agent = createAgent<
         "did:ion": new IonDIDProvider({
           defaultKms: "local",
         }),
+        "did:pkh": new PkhDIDProvider({
+          defaultKms: "local",
+        }),
+        "did:jwk": new JwkDIDProvider({
+          defaultKms: "local",
+        }),
       },
     }),
 
     new DIDResolverPlugin({
       resolver: new Resolver({
         ...ethrDidResolver({ infuraProjectId: INFURA_PROJECT_ID }),
-        ...webDidResolver(),
+        ...webDidResolver(),...getDidPkhResolver(), ...getDidJwkResolver(), ...getDidKeyResolver()
       }),
     }),
     new CredentialPlugin(),

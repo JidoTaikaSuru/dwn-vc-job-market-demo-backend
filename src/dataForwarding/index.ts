@@ -9,11 +9,117 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import * as ethers  from  "ethers";
 const keyto = require('@trust/keyto'); //this is the winner
-
+import * as didJWT from 'did-jwt';
 import dotenv from "dotenv";
 
 
+
 dotenv.config();
+
+
+
+const identifier = await agent.didManagerGetByAlias({
+  alias: DEFAULT_IDENTIFIER_SCHEMA,
+});
+
+
+let pkhidentifier ;
+
+try {
+  pkhidentifier =  await agent.didManagerGetByAlias({
+  alias: "pkhidentifier", provider: "did:pkh"
+});
+  console.log("🚀 ~ file: index.ts:88 ~ pkhidentifier:", pkhidentifier)
+} catch (error) {
+ // console.log("🚀 ~ file: index.ts:89 ~ Catch:", error)
+  
+}
+
+
+if( ! pkhidentifier ){
+  pkhidentifier = await agent.didManagerCreate({
+    alias: "pkhidentifier",
+    provider: "did:pkh",
+});
+  console.log("🚀 ~ file: index.ts:100 ~ pkhidentifier:", pkhidentifier)
+}
+
+
+
+let jwkidentifier ;
+
+try {
+  jwkidentifier =  await agent.didManagerGetByAlias({
+  alias: "jwkidentifier", provider: "did:jwk"
+});
+  console.log("🚀 ~ file: index.ts:88 ~ jwkidentifier:", jwkidentifier)
+} catch (error) {
+  //console.log("🚀 ~ file: index.ts:89 ~  Catch:", error)
+  
+}
+if( ! jwkidentifier ){
+  jwkidentifier = await agent.didManagerCreate({ 
+    alias: "jwkidentifier",
+    provider: "did:jwk",
+});
+  console.log("🚀 ~ file: index.ts:100 ~ jwkidentifier:", jwkidentifier)
+}
+if(jwkidentifier && jwkidentifier.keys[0].meta){
+
+  const inkey = await agent.keyManagerGet({kid: jwkidentifier.keys[0].kid})
+  console.log("🚀 ~ file: index.ts:125 ~ inkey:", inkey)
+  const signedjwt = await agent.keyManagerSignJWT({
+    kid: inkey.kid,
+   // data: new Uint8Array([21, 31]),
+   data: "asdasd",
+  })
+    console.log("🚀 ~ file: index.ts:129 ~ signedjwt:", signedjwt)
+
+    const jwkdoc = await agent.resolveDid({
+      didUrl: jwkidentifier.did,
+    })
+    
+
+    if( jwkdoc.didDocument?.verificationMethod && jwkdoc.didDocument?.verificationMethod[0]){
+      const resolvedmjwk = {...jwkdoc.didDocument?.verificationMethod[0].publicKeyJwk};
+      console.log("🚀 ~ file: index.ts:139 ~ mjwk:", resolvedmjwk)
+      /*
+      mjwk: {
+      alg: 'ES256K',
+      crv: 'secp256k1',
+      kty: 'EC',
+      use: 'sig',
+      x: 'wY83GrbakSpRB3aYRRi2kYmj68QAu0SKyeSvuUruAvU',
+      y: 'jPqFq5IGHM4DcLmVidUsY0qXIz4PnpdUhtXr-V-lSP0'
+    }
+
+    */
+    let jwkjose = await jose.importJWK(resolvedmjwk)
+    console.log("🚀 ~ file: index.ts:151 ~ jwkjose:", jwkjose)
+
+
+
+
+    try{
+      console.log("🚀 ~ file: index.ts:160 ~ signedjwt:", signedjwt)
+      let didJWTdecoded = didJWT.decodeJWT(signedjwt)
+      console.log("🚀 ~ file: index.ts:160 ~ didJWTdecoded:", didJWTdecoded)
+     
+
+
+    const { payload:payload11, protectedHeader:protectedHeader11 } = await jose.jwtVerify(signedjwt, jwkjose)
+    console.log("🚀 ~ file: index.ts:143 ~ protectedHeader11:", protectedHeader11)
+    console.log("🚀 ~ file: index.ts:143 ~ payload11:", payload11)
+    }
+    catch(e){
+      console.log("🚀 ~ ~ e:", e)
+    } 
+  }
+
+}
+
+
+
 
 
 export type TakeDataHeaders = {
@@ -23,6 +129,26 @@ export type TakeDataHeaders = {
 
  
 
+
+/*
+
+Steps 
+
+Build this version with regular node and docker. 
+
+Then build a version with an external DB option.  
+
+If we use express there will be many more years of code for coPilote to auto complete. V1 of Fastify was released 2018 https://fastify.dev/docs/latest/Reference/LTS/ 
+ok so lets use express for now . 
+
+
+0) Start fresh with simple fastify app 
+1) Accept data and save it to SQL DB .  (not supabase tho.  Local SQLITE db might be smart so its all in one. 
+  ... docker image that has sqlite included is definetly simpler than asking for an additional service. 
+
+
+
+*/ 
 
 
 //const debug_parent_privatekey ="680425c1f7cbb803be68aff2c841f654e3a2373920268231f99c95a954536ab9" // this fails 
@@ -50,6 +176,28 @@ mykeyJwk_pub.crv='secp256k1'
 const my_jwk_pubkey = await jose.importJWK(mykeyJwk_pub);
 
 const my_endpoint = "localhost:8080"
+
+
+
+1===1
+
+/*
+const keyidentifier = await agent.didManagerCreate({
+  alias: "keyidentifier",
+  provider: "did:key",
+});
+
+
+const jwkidentifier = await agent.didManagerCreate({
+  alias: "jwkidentifier",
+  provider: "did:jwk",
+});
+
+
+
+*/
+
+1==1;
 
 
 export default async function TakeDataRoutes(
