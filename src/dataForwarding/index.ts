@@ -16,6 +16,16 @@ import dotenv from "dotenv";
 import {getResolver} from 'ethr-did-resolver' //TODO remove 
 import { getResolver as pkhDidResolver } from "pkh-did-resolver"; 
 
+import { getResolver as keyDIDResolver } from "key-did-resolver";
+
+import * as multicodec from 'multiformats'
+import {base58btc} from 'multiformats/bases/base58'
+ 
+
+  
+
+
+let resolver = new Resolver({...keyDIDResolver(),...pkhDidResolver()});
 
 dotenv.config();
 
@@ -188,12 +198,30 @@ ok so lets use express for now .
 
 */ 
 
-
+/*
 //const debug_parent_privatekey ="680425c1f7cbb803be68aff2c841f654e3a2373920268231f99c95a954536ab9" // this fails 
 const debug_parent_privatekey = process.env['debug_parent_privatekey']? process.env['debug_parent_privatekey'] : "2163b9e4411ad1df8720833b35dcf57ce44556280d9e020de2dc11752798fddd"
 console.log("🚀 ~ file: index.ts:30 ~ debug_parent_privatekey:", debug_parent_privatekey)
 const debug_parent_wallet =  new ethers.Wallet(debug_parent_privatekey )
 const parent_pubkey = debug_parent_wallet.address; 
+//console.log("🚀 ~ file: index.ts:202 ~ parent_pubkey:", parent_pubkey)
+//console.log("🚀 ~ file: index.ts:202 ~ parent_pubkey:", parent_pubkey.slice(2,60))
+
+//const base58btcencoded1_parent_pubkey = base58btc.encode(didJWT.hexToBytes(parent_pubkey));
+ //console.log("🚀 ~ file: index.ts:211 ~ base58btcencoded1_parent_pubkey:", base58btcencoded1_parent_pubkey)
+ 
+
+ //const base58btcencoded1_parent_pubkey_didkey = 'did:key:'+base58btcencoded1_parent_pubkey;
+ //console.log("🚀 ~ file: index.ts:215 ~ base58btcencoded1_parent_pubkey_didkey:", base58btcencoded1_parent_pubkey_didkey)
+//const doc = await resolver.resolve(base58btcencoded1_parent_pubkey_didkey)
+
+const debug_parent_pubkey_PKH_did="did:pkh:eip155:1:"+parent_pubkey;
+const doc = await resolver.resolve(debug_parent_pubkey_PKH_did)
+console.log("🚀 ~ file: index.ts:206 ~ doc:", doc)
+if(doc.didDocument?.verificationMethod && doc.didDocument?.verificationMethod[0]){
+    //console.log("🚀 ~ file: index.ts:220 ~ doc.didDocument?.verificationMethod[0]:", doc.didDocument?.verificationMethod[0]) // does not give JWK  info 
+}
+
 
 const keyJwk  = keyto.from(debug_parent_privatekey, 'blk').toJwk('public');
 console.log("🚀 ~ file: index.ts:28 ~ keyJwk:", keyJwk)
@@ -212,15 +240,52 @@ const my_jwk_privatekey = await jose.importJWK(mykeyJwk);
 const mykeyJwk_pub  = keyto.from(my_privatekey, 'blk').toJwk('public');
 mykeyJwk_pub.crv='secp256k1'
 const my_jwk_pubkey = await jose.importJWK(mykeyJwk_pub);
+*/
+
 
 const my_endpoint = "localhost:8080"
 
+const my_privatekey ="08196d9ad2196af7d481f25bd47e3a8cef48998db90360da39631d84969451d9"
+const my_etherswallet =  new ethers.Wallet(my_privatekey ) //Not sure if i need the 0x   up front or if its optinoal 
+const my_pubkey =my_etherswallet.address
 
-const didJWTsigner = didJWT.ES256KSigner(didJWT.hexToBytes(debug_parent_privatekey)) 
+const my_pubkey_did_pkh="did:pkh:eip155:1:"+my_pubkey;
 
+const my_privatekey_didJWTsigner =  didJWT.ES256KSigner(didJWT.hexToBytes(my_privatekey)) 
+ 
+
+//const debug_parent_privatekey ="680425c1f7cbb803be68aff2c841f654e3a2373920268231f99c95a954536ab9" // this fails 
+const debug_parent_privatekey = process.env['debug_parent_privatekey']? process.env['debug_parent_privatekey'] : "2163b9e4411ad1df8720833b35dcf57ce44556280d9e020de2dc11752798fddd"
+console.log("🚀 ~ file: index.ts:30 ~ debug_parent_privatekey:", debug_parent_privatekey)
+const debug_parent_wallet =  new ethers.Wallet(debug_parent_privatekey )
+const parent_pubkey = debug_parent_wallet.address; 
+//console.log("🚀 ~ file: index.ts:202 ~ parent_pubkey:", parent_pubkey)
+//console.log("🚀 ~ file: index.ts:202 ~ parent_pubkey:", parent_pubkey.slice(2,60))
+
+//const base58btcencoded1_parent_pubkey = base58btc.encode(didJWT.hexToBytes(parent_pubkey));
+ //console.log("🚀 ~ file: index.ts:211 ~ base58btcencoded1_parent_pubkey:", base58btcencoded1_parent_pubkey)
+ 
+
+ //const base58btcencoded1_parent_pubkey_didkey = 'did:key:'+base58btcencoded1_parent_pubkey;
+ //console.log("🚀 ~ file: index.ts:215 ~ base58btcencoded1_parent_pubkey_didkey:", base58btcencoded1_parent_pubkey_didkey)
+//const doc = await resolver.resolve(base58btcencoded1_parent_pubkey_didkey)
+
+const debug_parent_pubkey_PKH_did="did:pkh:eip155:1:"+parent_pubkey;
+const doc = await resolver.resolve(debug_parent_pubkey_PKH_did)
+console.log("🚀 ~ file: index.ts:206 ~ doc:", doc)
+if(doc.didDocument?.verificationMethod && doc.didDocument?.verificationMethod[0]){
+    //console.log("🚀 ~ file: index.ts:220 ~ doc.didDocument?.verificationMethod[0]:", doc.didDocument?.verificationMethod[0]) // does not give JWK  info 
+}
+
+
+
+//import * as didJWT from 'did-jwt';
+//import * as jose from 'jose'
+const debug_parent_privatekey_didJWTsigner =  didJWT.ES256KSigner(didJWT.hexToBytes(debug_parent_privatekey)) 
+ 
 let didJWTjwt = await didJWT.createJWT(
-  { aud: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74', iat: undefined, name: 'uPort Developer' },
-  { issuer: 'did:ethr:0xf3beac30c498d9e26865f34fcaa57dbb935b0d74', signer:didJWTsigner },
+  { aud: debug_parent_pubkey_PKH_did, iat: undefined, name: 'uPort Developer' },
+  { issuer: debug_parent_pubkey_PKH_did, signer:debug_parent_privatekey_didJWTsigner },
   { alg: 'ES256K' });
 console.log("🚀 ~ file: index.ts:224 ~ jwt:", didJWTjwt)
 
@@ -228,10 +293,19 @@ let didJWTdecoded = didJWT.decodeJWT(didJWTjwt)
 console.log("🚀 ~ file: index.ts:39 ~ decoded:", didJWTdecoded)
 
 try{
-  const { payload:payload_didjwt, protectedHeader:protectedHeader5_didjwt } = await jose.jwtVerify(didJWTjwt, parent_jwk_pubkey)
-  console.log("🚀 ~ file: index.ts:232 ~ protectedHeader5_didjwt:", protectedHeader5_didjwt)
-  console.log("🚀 ~ file: index.ts:232 ~ payload_didjwt:", payload_didjwt)
-  if( !payload_didjwt.error){
+
+  let verificationResponse = await didJWT.verifyJWT(didJWTjwt, {
+    resolver,
+    audience: debug_parent_pubkey_PKH_did
+  });
+  console.log("🚀 ~ file: index.ts:246 ~ verificationResponse:", verificationResponse)
+
+
+
+  // const { payload:payload_didjwt, protectedHeader:protectedHeader5_didjwt } = await jose.jwtVerify(didJWTjwt, parent_jwk_pubkey)
+  // console.log("🚀 ~ file: index.ts:232 ~ protectedHeader5_didjwt:", protectedHeader5_didjwt)
+  // console.log("🚀 ~ file: index.ts:232 ~ payload_didjwt:", payload_didjwt)
+  if( verificationResponse.verified){
     console.log(">>> JWT VERIFIED !  <<<")
     console.log(">>> JWT VERIFIED !  <<<")
     console.log(">>> JWT VERIFIED !  <<<")
@@ -337,19 +411,41 @@ export default async function TakeDataRoutes(
 
       if(producer_jwt && request.body ){
 
-        console.log("🚀 ~ file: index.ts:79 ~ handler: ~ parent_jwt_pubkey:", JSON.stringify(parent_jwk_pubkey))
+        //console.log("🚀 ~ file: index.ts:79 ~ handler: ~ parent_jwt_pubkey:", JSON.stringify(parent_jwk_pubkey))
 
         try{
+
+
+//const debug_parent_pubkey_PKH_did="did:pkh:eip155:1:"+parent_pubkey;
+//const debug_parent_privatekey_didJWTsigner =  didJWT.ES256KSigner(didJWT.hexToBytes(debug_parent_privatekey)) 
+    
+    let isverfied=false;
+    
+      let verificationResponse = await didJWT.verifyJWT(producer_jwt, {
+        resolver,
+        audience: debug_parent_pubkey_PKH_did
+      });
+      console.log("🚀 ~ file: index.ts:428 ~ handler: ~ verificationResponse:", verificationResponse)
+    
+
+/*
         const { payload:payload5, protectedHeader:protectedHeader5 } = await jose.jwtVerify(producer_jwt, parent_jwk_pubkey)
          
         console.log("🚀 ~ file: index.js:60 ~ payload5:", payload5)
         console.log("🚀 ~ file: index.js:60 ~ protectedHeader5:", protectedHeader5)
+        isverfied=!payload5.error
         
-    
-        if( !payload5.error){
+    */ 
+        if( isverfied){
         
+
+
         const body = JSON.stringify(await request.body);
         console.log("🚀 ~ file: index.ts:93 ~ handler: ~ body:", body)
+
+        const bodyhashHex =  await sha256(body);
+
+        /*
         const dag_json_endcode=encode(body);
         console.log("🚀 ~ file: index.ts:95 ~ handler: ~ dag_json_endcode:", dag_json_endcode)
         const decodebody=decode(dag_json_endcode);
@@ -374,11 +470,16 @@ export default async function TakeDataRoutes(
         .sign(my_jwk_privatekey)
         console.log("🚀 ~ file: index.ts:119 ~ handler: ~ signed_body_hash:", signed_body_hash)
  
+*/
 
+      let signed_body_hash = await didJWT.createJWT(
+        { aud:my_pubkey_did_pkh, 'urn:recieved:data': true , "data:hash":bodyhashHex, "my_endpoint":my_endpoint},
+        { issuer: my_pubkey_did_pkh, signer:my_privatekey_didJWTsigner },
+        { alg: 'ES256K' });
+      console.log("🚀 ~ file: index.ts:224 ~ jwt:", signed_body_hash)
 
-
-         
-        return reply.status(200).send({"bodyhashHex":bodyhashHex, "ack_jwt":signed_body_hash, "server_Jwk_pub":mykeyJwk_pub, "server_pubkey":my_pubkey});
+      
+        return reply.status(200).send({"bodyhashHex":bodyhashHex, "ack_jwt":signed_body_hash, "server_did_pkh":my_pubkey_did_pkh, "server_pubkey":my_pubkey});
         }
         }
         catch(e){

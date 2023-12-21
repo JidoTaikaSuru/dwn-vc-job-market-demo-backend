@@ -74,6 +74,9 @@ dependencies:
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
+  elliptic:
+    specifier: ^6.5.4
+    version: 6.5.4
   ethr-did-resolver:
     specifier: ^10.0.0
     version: 10.1.0
@@ -86,6 +89,15 @@ dependencies:
   jose:
     specifier: ^5.1.3
     version: 5.1.3
+  key-did-resolver:
+    specifier: ^3.0.0
+    version: 3.0.0
+  multicodec:
+    specifier: ^3.2.1
+    version: 3.2.1
+  multiformats:
+    specifier: ^13.0.0
+    version: 13.0.0
   pg:
     specifier: ^8.11.3
     version: 8.11.3
@@ -5024,6 +5036,11 @@ packages:
     dev: false
     optional: true
 
+  /bigint-mod-arith@3.3.1:
+    resolution: {integrity: sha512-pX/cYW3dCa87Jrzv6DAr8ivbbJRzEX5yGhdt8IutnX/PCIXfpx+mabWNK/M8qqh+zQ0J3thftUBHW0ByuUlG0w==}
+    engines: {node: '>=10.4.0'}
+    dev: false
+
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
@@ -8221,6 +8238,18 @@ packages:
       randombytes: 2.1.0
     dev: false
 
+  /key-did-resolver@3.0.0:
+    resolution: {integrity: sha512-IyEq64AdS6lUwtn3YSvGpu7KAGA2x5+fjRCUIa8+ccSLmWrODV/ICM5aa6hHV/19EPWef8/e322r9sQJJ6/3qA==}
+    engines: {node: '>=14.14'}
+    dependencies:
+      '@stablelib/ed25519': 1.0.3
+      bigint-mod-arith: 3.3.1
+      multiformats: 11.0.2
+      nist-weierstrauss: 1.6.1
+      uint8arrays: 4.0.10
+      varint: 6.0.0
+    dev: false
+
   /kind-of@6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
@@ -9123,6 +9152,10 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dev: false
 
+  /multiformats@13.0.0:
+    resolution: {integrity: sha512-xiIB0p7EKmETm3wyKedOg/xuyQ18PoWwXCzzgpZAiDxL9ktl3XTh8AqoDT5kAqRg+DU48XAGPsUJL2Rn6Bx3Lw==}
+    dev: false
+
   /multiformats@9.9.0:
     resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
     dev: false
@@ -9199,6 +9232,13 @@ packages:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
     dev: false
     optional: true
+
+  /nist-weierstrauss@1.6.1:
+    resolution: {integrity: sha512-FpjCOnPV/s3ZVIkeldCVSml2K4lruabPbBgoEitpCK1JL0KTVoWb56CFTU6rZn5i6VqAjdwcOp0FDwJACPmeFA==}
+    dependencies:
+      multiformats: 9.9.0
+      uint8arrays: 2.1.10
+    dev: false
 
   /nocache@3.0.4:
     resolution: {integrity: sha512-WDD0bdg9mbq6F4mRxEYcPWwfA1vxd0mrvKOyxI7Xj/atfRHVeutzuWByG//jfm4uPzp0y4Kj051EORCBSQMycw==}
@@ -11672,6 +11712,12 @@ packages:
     resolution: {integrity: sha512-ohRElqR6C5dd60vRFLq40MCiSnUe1AzkpHvbCEMCGGP6zMoFYECsjdhL6bR1kTK37ONNRDuHQ3RIpScRYcYYIg==}
     dependencies:
       uint8arrays: 4.0.10
+    dev: false
+
+  /uint8arrays@2.1.10:
+    resolution: {integrity: sha512-Q9/hhJa2836nQfEJSZTmr+pg9+cDJS9XEAp7N2Vg5MzL3bK/mkMVfjscRGYruP9jNda6MAdf4QD/y78gSzkp6A==}
+    dependencies:
+      multiformats: 9.9.0
     dev: false
 
   /uint8arrays@3.1.1:
