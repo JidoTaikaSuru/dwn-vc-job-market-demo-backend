@@ -259,52 +259,35 @@ const debug_parent_privatekey = process.env['debug_parent_privatekey']? process.
 console.log("🚀 ~ file: index.ts:30 ~ debug_parent_privatekey:", debug_parent_privatekey)
 const debug_parent_wallet =  new ethers.Wallet(debug_parent_privatekey )
 const parent_pubkey = debug_parent_wallet.address; 
-//console.log("🚀 ~ file: index.ts:202 ~ parent_pubkey:", parent_pubkey)
-//console.log("🚀 ~ file: index.ts:202 ~ parent_pubkey:", parent_pubkey.slice(2,60))
-
-//const base58btcencoded1_parent_pubkey = base58btc.encode(didJWT.hexToBytes(parent_pubkey));
- //console.log("🚀 ~ file: index.ts:211 ~ base58btcencoded1_parent_pubkey:", base58btcencoded1_parent_pubkey)
  
-
- //const base58btcencoded1_parent_pubkey_didkey = 'did:key:'+base58btcencoded1_parent_pubkey;
- //console.log("🚀 ~ file: index.ts:215 ~ base58btcencoded1_parent_pubkey_didkey:", base58btcencoded1_parent_pubkey_didkey)
-//const doc = await resolver.resolve(base58btcencoded1_parent_pubkey_didkey)
-
 const debug_parent_pubkey_PKH_did="did:pkh:eip155:1:"+parent_pubkey;
+console.log("🚀 ~ file: index.ts:264 ~ debug_parent_pubkey_PKH_did:", debug_parent_pubkey_PKH_did)
 const doc = await resolver.resolve(debug_parent_pubkey_PKH_did)
 console.log("🚀 ~ file: index.ts:206 ~ doc:", doc)
 if(doc.didDocument?.verificationMethod && doc.didDocument?.verificationMethod[0]){
     //console.log("🚀 ~ file: index.ts:220 ~ doc.didDocument?.verificationMethod[0]:", doc.didDocument?.verificationMethod[0]) // does not give JWK  info 
 }
 
-
-
-//import * as didJWT from 'did-jwt';
-//import * as jose from 'jose'
 const debug_parent_privatekey_didJWTsigner =  didJWT.ES256KSigner(didJWT.hexToBytes(debug_parent_privatekey)) 
  
-let didJWTjwt = await didJWT.createJWT(
-  { aud: debug_parent_pubkey_PKH_did, iat: undefined, name: 'uPort Developer' },
+let didJWTjwt_fromparent = await didJWT.createJWT(
+  { aud: debug_parent_pubkey_PKH_did, iat: undefined, name: 'example parent forever access jwt' },
   { issuer: debug_parent_pubkey_PKH_did, signer:debug_parent_privatekey_didJWTsigner },
   { alg: 'ES256K' });
-console.log("🚀 ~ file: index.ts:224 ~ jwt:", didJWTjwt)
+console.log("🚀 ~ file: index.ts:224 ~ didJWTjwt_fromparent:", didJWTjwt_fromparent)
 
-let didJWTdecoded = didJWT.decodeJWT(didJWTjwt)
+let didJWTdecoded = didJWT.decodeJWT(didJWTjwt_fromparent)
 console.log("🚀 ~ file: index.ts:39 ~ decoded:", didJWTdecoded)
 
 try{
 
-  let verificationResponse = await didJWT.verifyJWT(didJWTjwt, {
+  let verificationResponse = await didJWT.verifyJWT(didJWTjwt_fromparent, {
     resolver,
     audience: debug_parent_pubkey_PKH_did
   });
   console.log("🚀 ~ file: index.ts:246 ~ verificationResponse:", verificationResponse)
 
 
-
-  // const { payload:payload_didjwt, protectedHeader:protectedHeader5_didjwt } = await jose.jwtVerify(didJWTjwt, parent_jwk_pubkey)
-  // console.log("🚀 ~ file: index.ts:232 ~ protectedHeader5_didjwt:", protectedHeader5_didjwt)
-  // console.log("🚀 ~ file: index.ts:232 ~ payload_didjwt:", payload_didjwt)
   if( verificationResponse.verified){
     console.log(">>> JWT VERIFIED !  <<<")
     console.log(">>> JWT VERIFIED !  <<<")
@@ -317,26 +300,6 @@ catch(e){
   console.log("🚀 ~ file: index.ts:237 ~ e:", e)
 }
 
-
-1===1
-
-/*
-const keyidentifier = await agent.didManagerCreate({
-  alias: "keyidentifier",
-  provider: "did:key",
-});
-
-
-const jwkidentifier = await agent.didManagerCreate({
-  alias: "jwkidentifier",
-  provider: "did:jwk",
-});
-
-
-
-*/
-
-1==1;
 
 
 export default async function TakeDataRoutes(
@@ -381,37 +344,8 @@ export default async function TakeDataRoutes(
 
 
 
-      /*
-        const salt = new Uint8Array(16);
-      
-        const key = await argon2id({
-          password: 'pass',
-          salt, // salt is a buffer containing random bytes
-          parallelism: 1,
-          iterations: 256,
-          memorySize: 512, // use 512KB memory
-          hashLength: 32, // output size = 32 bytes
-          outputType: 'encoded', // return standard encoded string containing parameters needed to verify the key
-        });
-      
-        console.log('Derived key:', key);
-      
-        const isValid = await argon2Verify({
-          password: 'pass',
-          hash: key,
-        });
-        console.log("🚀 ~ file: index.ts:104 ~ run ~ isValid:", isValid)
-      
-        console.log(isValid ? 'Valid password' : 'Invalid password');
-
-      */
-
-
-
 
       if(producer_jwt && request.body ){
-
-        //console.log("🚀 ~ file: index.ts:79 ~ handler: ~ parent_jwt_pubkey:", JSON.stringify(parent_jwk_pubkey))
 
         try{
 
@@ -427,7 +361,9 @@ export default async function TakeDataRoutes(
       });
       console.log("🚀 ~ file: index.ts:428 ~ handler: ~ verificationResponse:", verificationResponse)
     
-
+      if( verificationResponse.verified){
+        isverfied =true;
+      } 
 /*
         const { payload:payload5, protectedHeader:protectedHeader5 } = await jose.jwtVerify(producer_jwt, parent_jwk_pubkey)
          
